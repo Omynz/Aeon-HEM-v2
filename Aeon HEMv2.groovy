@@ -1,60 +1,12 @@
 /**
- *  Aeon HEMv2+
+ * SmartThings Device Type for Aeon Home Energy Monitor v1 (HEM v1)
+ * (Goal of project is to) Displays individual values for each clamp (L1, L2) for granular monitoring
+ * Example: Individual circuits (breakers) of high-load devices, such as HVAC or clothes dryer
+ *  
+ * Original Author: Copyright 2014 Barry A. Burke
  *
- *  Copyright 2014 Barry A. Burke
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License. You may obtain a copy of the License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
- *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
- *  for the specific language governing permissions and limitations under the License.
- *
- *
- *  Aeon Home Energy Meter v2 (US)
- *
- *  Author: Barry A. Burke
- *  Contributors: Brock Haymond: UI updates
- *
- *  Genesys: Based off of Aeon Smart Meter Code sample provided by SmartThings (2013-05-30). Built on US model
- *			 may also work on international versions (currently reports total values only)
- *
- *  History:
- * 		
- *	2014-06-13: Massive OverHaul
- *				- Fixed Configuration (original had byte order of bitstrings backwards
- *				- Increased reporting frequency to 10s - note that values won't report unless they change
- *				  (they will also report if they exceed limits defined in the settings - currently just using
- *				  the defaults).
- *				- Added support for Volts & Amps monitoring (was only Power and Energy)
- *				- Added flexible tile display. Currently only used to show High and Low values since last
- *				  reset (with time stamps). 
- *				- All tiles are attributes, so that their values are preserved when you're not 'watching' the
- *				  meter display
- *				- Values are formatted to Strings in zwaveEvent parser so that we don't lose decimal values 
- *				  in the tile label display conversion
- *				- Updated fingerprint to match Aeon Home Energy Monitor v2 deviceId & clusters
- *				- Added colors for Watts and Amps display
- * 				- Changed time format to 24 hour
- *	2014-06-17: Tile Tweaks
- *				- Reworked "decorations:" - current values are no longer "flat"
- *				- Added colors to current Watts (0-18000) & Amps (0-150)
- *				- Changed all colors to use same blue-green-orange-red as standard ST temperature guages
- *	2014-06-18: Cost calculations
- *				- Added $/kWh preference
- *	2014-09-07:	Bug fix & Cleanup
- *				- Fixed "Unexpected Error" on Refresh tile - (added Refresh Capability)
- *				- Cleaned up low values - reset to ridiculously high value instead of null
- *				- Added poll() command/capability (just does a refresh)
- * 	2014-09-19: GUI Tweaks, HEM v1 alterations (from Brock Haymond)
- *				- Reworked all tiles for look, color, text formatting, & readability
- *	2014-09-20: Added HEMv1 Battery reporting (from Brock Haymond)
- *	2014-11-06: Added alternate display of L2 and L2 values instead of Low/High, based on version by Jayant Jhamb
- *  2014-11-11: Massive overhaul completed (see GitHub comments for specifics)
- * 				- 
- */
+ **/
+
 metadata {
 	// Automatically generated. Make future change here.
 	definition (
@@ -86,6 +38,8 @@ metadata {
         attribute "powerOne", "string"
         attribute "powerTwo", "string"
         
+// Not needed for v1
+/*
         attribute "voltsDisp", "string"
         attribute "voltsOne", "string"
         attribute "voltsTwo", "string"
@@ -93,8 +47,9 @@ metadata {
         attribute "ampsDisp", "string"
         attribute "ampsOne", "string"
         attribute "ampsTwo", "string"        
-        
-		command "reset"
+*/        
+	
+	command "reset"
         command "configure"
         command "refresh"
         command "poll"
