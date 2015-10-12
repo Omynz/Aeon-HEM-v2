@@ -58,7 +58,7 @@
 metadata {
 	// Automatically generated. Make future change here.
 	definition (
-		name: 		"Aeon HEMv2+", 
+		name: 		"Aeon HEM L1 L2", 
 		namespace: 	"Green Living",
 		category: 	"Green Living",
 		author: 	"Barry A. Burke"
@@ -130,7 +130,8 @@ metadata {
             		[value: 1, color: "#000000"],
             		[value: 10000, color: "#ffffff"]
             	], 
-            	foregroundColor: "#000000",
+            	foregroundColor: "#000000"
+                /*
                 backgroundColors:[
 					[value: "0 Watts", 		color: "#153591"],
 					[value: "3000 Watts", 	color: "#1e9cbb"],
@@ -140,7 +141,7 @@ metadata {
 					[value: "15000 Watts", 	color: "#d04e00"], 
 					[value: "18000 Watts", 	color: "#bc2323"]
 					
-				/* For low-wattage homes, use these values
+				For low-wattage homes, use these values
 					[value: "0 Watts", color: "#153591"],
 					[value: "500 Watts", color: "#1e9cbb"],
 					[value: "1000 Watts", color: "#90d2a7"],
@@ -148,8 +149,8 @@ metadata {
 					[value: "2000 Watts", color: "#f1d801"],
 					[value: "2500 Watts", color: "#d04e00"],
 					[value: "3000 Watts", color: "#bc2323"]
-				*/
 				]
+                */
 			)
 		}
         valueTile("powerOne", "device.powerOne") {
@@ -160,7 +161,8 @@ metadata {
             		[value: 1, color: "#000000"],
             		[value: 10000, color: "#ffffff"]
             	], 
-            	foregroundColor: "#000000",
+            	foregroundColor: "#000000"
+                /*
                 backgroundColors:[
 					[value: "0 Watts", 		color: "#153591"],
 					[value: "3000 Watts", 	color: "#1e9cbb"],
@@ -170,7 +172,7 @@ metadata {
 					[value: "15000 Watts", 	color: "#d04e00"], 
 					[value: "18000 Watts", 	color: "#bc2323"]
 					
-				/* For low-wattage homes, use these values
+				For low-wattage homes, use these values
 					[value: "0 Watts", color: "#153591"],
 					[value: "500 Watts", color: "#1e9cbb"],
 					[value: "1000 Watts", color: "#90d2a7"],
@@ -178,8 +180,8 @@ metadata {
 					[value: "2000 Watts", color: "#f1d801"],
 					[value: "2500 Watts", color: "#d04e00"],
 					[value: "3000 Watts", color: "#bc2323"]
-				*/
 				]
+                */
 			)
         }
         valueTile("powerTwo", "device.powerTwo") {
@@ -190,7 +192,8 @@ metadata {
             		[value: 1, color: "#000000"],
             		[value: 10000, color: "#ffffff"]
             	], 
-            	foregroundColor: "#000000",
+            	foregroundColor: "#000000"
+                /*
                 backgroundColors:[
 					[value: "0 Watts", 		color: "#153591"],
 					[value: "3000 Watts", 	color: "#1e9cbb"],
@@ -200,7 +203,7 @@ metadata {
 					[value: "15000 Watts", 	color: "#d04e00"], 
 					[value: "18000 Watts", 	color: "#bc2323"]
 					
-				/* For low-wattage homes, use these values
+				For low-wattage homes, use these values
 					[value: "0 Watts", color: "#153591"],
 					[value: "500 Watts", color: "#1e9cbb"],
 					[value: "1000 Watts", color: "#90d2a7"],
@@ -208,8 +211,8 @@ metadata {
 					[value: "2000 Watts", color: "#f1d801"],
 					[value: "2500 Watts", color: "#d04e00"],
 					[value: "3000 Watts", color: "#bc2323"]
-				*/
 				]
+                */
 			)
         }
 
@@ -241,20 +244,23 @@ metadata {
         	state(
         		"default", 
         		label: '${currentValue}', 
-        		backgroundColors:[
+        		/*
+                backgroundColors:[
             		[value: "115.6 Volts", 	color: "#bc2323"],
                 	[value: "117.8 Volts", 	color: "#D04E00"],
                 	[value: "120.0 Volts", 	color: "#44B621"],
                 	[value: "122.2 Volts", 	color: "#D04E00"],
                 	[value: "124.4 Volts", 	color: "#bc2323"]
             	]
+                */
             )
         }
         valueTile("voltsOne", "device.voltsOne") {
         	state(
         		"default", 
         		label:'${currentValue}',
-       			backgroundColors:[
+       			/*
+                backgroundColors:[
        				[value: "L1", color: "#ffffff"],
             		[value: "115.6 Volts", 	color: "#bc2323"],
                 	[value: "117.8 Volts", 	color: "#D04E00"],
@@ -262,13 +268,15 @@ metadata {
                 	[value: "122.2 Volts", 	color: "#D04E00"],
                 	[value: "124.4 Volts", 	color: "#bc2323"]
             	]
+                */
             )
         }
         valueTile("voltsTwo", "device.voltsTwo") {
         	state(
         		"default", 
         		label:'${currentValue}',
-    			backgroundColors:[
+    			/*
+                backgroundColors:[
     				[value: "L2", color: "#ffffff"],
             		[value: "115.6 Volts", 	color: "#bc2323"],
                 	[value: "117.8 Volts", 	color: "#D04E00"],
@@ -276,6 +284,7 @@ metadata {
                 	[value: "122.2 Volts", 	color: "#D04E00"],
                 	[value: "124.4 Volts", 	color: "#bc2323"]
             	]
+                */
             )
         }
     
@@ -286,7 +295,8 @@ metadata {
         		label: '${currentValue}' , 
         		foregroundColor: "#000000", 
     			color: "#000000", 
-    			backgroundColors:[
+    			/*
+                backgroundColors:[
 					[value: "0 Amps", 	color: "#153591"],
 					[value: "25 Amps", 	color: "#1e9cbb"],
 					[value: "50 Amps", 	color: "#90d2a7"],
@@ -295,6 +305,7 @@ metadata {
 					[value: "125 Amps", color: "#d04e00"], 
 					[value: "150 Amps", color: "#bc2323"]
 				]
+                */
 			)
         }
         valueTile("ampsOne", "device.ampsOne") {
@@ -303,7 +314,8 @@ metadata {
         		label:'${currentValue}',
         		foregroundColor: "#000000", 
     			color: "#000000", 
-    			backgroundColors:[
+    			/*
+                backgroundColors:[
 					[value: "0 Amps", 	color: "#153591"],
 					[value: "25 Amps", 	color: "#1e9cbb"],
 					[value: "50 Amps", 	color: "#90d2a7"],
@@ -312,6 +324,7 @@ metadata {
 					[value: "125 Amps", color: "#d04e00"], 
 					[value: "150 Amps", color: "#bc2323"]
 				]
+                */
 			)
         }
         valueTile("ampsTwo", "device.ampsTwo") {
@@ -320,7 +333,8 @@ metadata {
         		label:'${currentValue}',
         		foregroundColor: "#000000", 
     			color: "#000000", 
-    			backgroundColors:[
+    			/*
+                backgroundColors:[
 					[value: "0 Amps", 	color: "#153591"],
 					[value: "25 Amps", 	color: "#1e9cbb"],
 					[value: "50 Amps", 	color: "#90d2a7"],
@@ -329,6 +343,7 @@ metadata {
 					[value: "125 Amps", color: "#d04e00"], 
 					[value: "150 Amps", color: "#bc2323"]
 				]
+                */
 			)        		
         }
     
@@ -353,14 +368,14 @@ metadata {
 // HEM Version Configuration only needs to be done here - comments to choose what gets displayed
 
 		main (["energyDisp","energyTwo",
-			"ampsDisp","voltsDisp",				// Comment out this one for HEMv1
+//			"ampsDisp","voltsDisp",				// Comment out this one for HEMv1
 			"powerDisp"
 			])
 		details([
 			"energyOne","energyDisp","energyTwo",
 			"powerOne","powerDisp","powerTwo",
-			"ampsOne","ampsDisp","ampsTwo",			// Comment out these two lines for HEMv1
-			"voltsOne","voltsDisp","voltsTwo",		// Comment out these two lines for HEMv1
+//			"ampsOne","ampsDisp","ampsTwo",			// Comment out these two lines for HEMv1
+//			"voltsOne","voltsDisp","voltsTwo",		// Comment out these two lines for HEMv1
 			"reset","refresh","toggle",
 		//	"battery",					// Include this for HEMv1	
 			"configure"
@@ -820,7 +835,7 @@ def configure() {
 //		zwave.configurationV1.configurationSet(parameterNumber: 6, size: 2, scaledConfigurationValue: 5).format(),			// Don't send L2 Data unless watts have changed by 15
 //      zwave.configurationV1.configurationSet(parameterNumber: 8, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (whole HEM)
 //		zwave.configurationV1.configurationSet(parameterNumber: 9, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (L1)
-//        zwave.configurationV1.configurationSet(parameterNumber: 10, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (L2)
+//      zwave.configurationV1.configurationSet(parameterNumber: 10, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (L2)
 //		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6145).format(),   	// Whole HEM and L1/L2 power in kWh
 //		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: kDelay).format(), 	// Default every 120 Seconds
 //		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1573646).format(),  // L1/L2 for Amps & Watts, Whole HEM for Amps, Watts, & Volts
@@ -828,7 +843,7 @@ def configure() {
 
 //		zwave.configurationV1.configurationSet(parameterNumber: 100, size: 1, scaledConfigurationValue: 0).format(),		// reset to defaults
 		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6149).format(),   	// All L1/L2 kWh, total Volts & kWh
-		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: 60).format(), 		// Every 60 seconds
+		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: 30).format(), 		// Every 60 seconds
 		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1572872).format(),	// Amps L1, L2, Total
 		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: 30).format(), 		// every 30 seconds
 		zwave.configurationV1.configurationSet(parameterNumber: 103, size: 4, scaledConfigurationValue: 770).format(),		// Power (Watts) L1, L2, Total
