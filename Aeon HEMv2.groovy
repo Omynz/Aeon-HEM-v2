@@ -10,7 +10,7 @@
 metadata {
 	// Automatically generated. Make future change here.
 	definition (
-		name: 		"Aeon HEM L1 L2", 
+		name: 		"Aeon HEM Coding", 
 		namespace: 	"Green Living",
 		category: 	"Green Living",
 		author: 	"Barry A. Burke"
@@ -49,7 +49,7 @@ metadata {
         attribute "ampsTwo", "string"        
 */        
 	
-	command "reset"
+        command "reset"
         command "configure"
         command "refresh"
         command "poll"
@@ -63,11 +63,11 @@ metadata {
 	// simulator metadata
 	simulator {
 		for (int i = 0; i <= 10000; i += 1000) {
-			status "power  ${i} W": new physicalgraph.zwave.Zwave().meterV1.meterReport(
+			status "power  ${i} W-ZZ": new physicalgraph.zwave.Zwave().meterV1.meterReport(
 				scaledMeterValue: i, precision: 3, meterType: 33, scale: 2, size: 4).incomingMessage()
 		}
 		for (int i = 0; i <= 100; i += 10) {
-			status "energy  ${i} kWh": new physicalgraph.zwave.Zwave().meterV1.meterReport(
+			status "energy  ${i} kWh-ZZ": new physicalgraph.zwave.Zwave().meterV1.meterReport(
 				scaledMeterValue: i, precision: 3, meterType: 33, scale: 0, size: 4).incomingMessage()
 		}
         // TODO: Add data feeds for Volts and Amps
@@ -175,40 +175,38 @@ metadata {
 		valueTile("energyDisp", "device.energyDisp") {
 			state(
 				"default", 
-				label: '${currentValue}', 
+				label: '${currentValue}',		// shows kWh value with ' kWh' suffix
 				foregroundColor: "#000000", 
 				backgroundColor: "#ffffff")
 		}
         valueTile("energyOne", "device.energyOne") {
         	state(
         		"default", 
-        		label: '${currentValue}', 
+        		label: '${currentValue}',		// shows kWh value with ' kWh' suffix
         		foregroundColor: "#000000", 
         		backgroundColor: "#ffffff")
         }        
         valueTile("energyTwo", "device.energyTwo") {
         	state(
         		"default", 
-        		label: '${currentValue}', 
+        		label: '${currentValue}',		// shows kWh value with ' kWh' suffix
         		foregroundColor: "#000000", 
         		backgroundColor: "#ffffff")
         }
-        
+
     // Volts row
         valueTile("voltsDisp", "device.voltsDisp") {
         	state(
         		"default", 
         		label: '${currentValue}', 
-        		/*
-                backgroundColors:[
+/*                backgroundColors:[
             		[value: "115.6 Volts", 	color: "#bc2323"],
                 	[value: "117.8 Volts", 	color: "#D04E00"],
                 	[value: "120.0 Volts", 	color: "#44B621"],
                 	[value: "122.2 Volts", 	color: "#D04E00"],
                 	[value: "124.4 Volts", 	color: "#bc2323"]
             	]
-                */
-            )
+*/            )
         }
         valueTile("voltsOne", "device.voltsOne") {
         	state(
@@ -312,9 +310,9 @@ metadata {
 		standardTile("configure", "command.configure", inactiveLabel: false) {
 			state "configure", label:'', action: "configure", icon:"st.secondary.configure"
 		}
-		standardTile("toggle", "command.toggleDisplay", inactiveLabel: false) {
-			state "default", label: "toggle", action: "toggleDisplay", icon: "st.motion.motion.inactive"
-		}
+//		standardTile("toggle", "command.toggleDisplay", inactiveLabel: false) {
+//			state "default", label: "toggle", action: "toggleDisplay", icon: "st.motion.motion.inactive"
+//		}
 		/* HEMv1 has a battery; v2 is line-powered */
 		 valueTile("battery", "device.battery", decoration: "flat") {
 			state "battery", label:'${currentValue}% battery', unit:""
@@ -327,8 +325,8 @@ metadata {
 			"powerDisp"
 			])
 		details([
-			"energyOne","energyDisp","energyTwo",
-			"powerOne","powerDisp","powerTwo",
+			"energyOne","energyTwo","energyDisp",
+			"powerOne","powerTwo","powerDisp",
 //			"ampsOne","ampsDisp","ampsTwo",			// Comment out these two lines for HEMv1
 //			"voltsOne","voltsDisp","voltsTwo",		// Comment out these two lines for HEMv1
 			"reset","refresh","toggle",
@@ -384,7 +382,7 @@ def zwaveEvent(physicalgraph.zwave.commands.meterv1.MeterReport cmd) {
         	newValue = Math.round(cmd.scaledMeterValue * 100) / 100
         	if (newValue != state.energyValue) {
         		formattedValue = String.format("%5.2f", newValue)
-    			dispValue = "${formattedValue}\nkWh"
+    			dispValue = "Total\n${formattedValue}\nkWh"		// total kWh label
                 sendEvent(name: "energyDisp", value: dispValue as String, unit: "", descriptionText: "Display Energy: ${newValue} kWh", displayed: false)
                 state.energyValue = newValue
                 BigDecimal costDecimal = newValue * ( kWhCost as BigDecimal )
@@ -408,7 +406,7 @@ def zwaveEvent(physicalgraph.zwave.commands.meterv1.MeterReport cmd) {
         	newValue = Math.round(cmd.scaledMeterValue)		// really not worth the hassle to show decimals for Watts
             if (newValue > MAX_WATTS) { return }				// Ignore ridiculous values (a 200Amp supply @ 120volts is roughly 24000 watts)
         	if (newValue != state.powerValue) {
-    			dispValue = newValue+"\nWatts"
+    			dispValue = "Total\n"+newValue+"\nWatts"	// Total watts label
                 sendEvent(name: "powerDisp", value: dispValue as String, unit: "", descriptionText: "Display Power: ${newValue} Watts", displayed: false)
                 
                 if (newValue < state.powerLow) {
@@ -495,7 +493,7 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue)
                     if (newValue > MAX_WATTS) { return }
 					formattedValue = newValue as String
-					dispValue = "${formattedValue}\nWatts"
+					dispValue = "HVAC\n${formattedValue}\nWatts"	// L1 Watts Label
 					if (dispValue != state.powerL1Disp) {
 						state.powerL1Disp = dispValue
 						if (state.display == 2) {
@@ -508,7 +506,7 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 				else if (encapsulatedCommand.scale == 0 ){
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue * 100) / 100
 					formattedValue = String.format("%5.2f", newValue)
-					dispValue = "${formattedValue}\nkWh"
+					dispValue = "HVAC\n${formattedValue}\nkWh"		// L1 kWh label
 					if (dispValue != state.energyL1Disp) {
 						state.energyL1Disp = dispValue
 						if (state.display == 2) {
@@ -566,7 +564,7 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue)
                     if (newValue > MAX_WATTS ) { return }
 					formattedValue = newValue as String
-					dispValue = "${formattedValue}\nWatts"
+					dispValue = "Dryer\n${formattedValue}\nWatts"	// L2 Watts label
 					if (dispValue != state.powerL2Disp) {
 						state.powerL2Disp = dispValue
 						if (state.display == 2) {
@@ -579,7 +577,7 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 				else if (encapsulatedCommand.scale == 0 ){
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue * 100) / 100
 					formattedValue = String.format("%5.2f", newValue)
-					dispValue = "${formattedValue}\nkWh"
+					dispValue = "Dryer\n${formattedValue}\nkWh"		// L2 kWh label
 					if (dispValue != state.energyL2Disp) {
 						state.energyL2Disp = dispValue
 						if (state.display == 2) {
@@ -784,6 +782,7 @@ def configure() {
 	}
     
 	def cmd = delayBetween([
+    	zwave.configurationV1.configurationSet(parameterNumber: 1, size: 2, scaledConfigurationValue: 240).format(),		// assumed voltage
 		zwave.configurationV1.configurationSet(parameterNumber: 3, size: 1, scaledConfigurationValue: 0).format(),			// Disable (=0) selective reporting
 //		zwave.configurationV1.configurationSet(parameterNumber: 4, size: 2, scaledConfigurationValue: 5).format(),			// Don't send whole HEM unless watts have changed by 30
 //		zwave.configurationV1.configurationSet(parameterNumber: 5, size: 2, scaledConfigurationValue: 5).format(),			// Don't send L1 Data unless watts have changed by 15
@@ -791,18 +790,18 @@ def configure() {
 //      zwave.configurationV1.configurationSet(parameterNumber: 8, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (whole HEM)
 //		zwave.configurationV1.configurationSet(parameterNumber: 9, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (L1)
 //      zwave.configurationV1.configurationSet(parameterNumber: 10, size: 1, scaledConfigurationValue: 1).format(),			// Or by 5% (L2)
-//		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6145).format(),   	// Whole HEM and L1/L2 power in kWh
-//		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: kDelay).format(), 	// Default every 120 Seconds
-//		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1573646).format(),  // L1/L2 for Amps & Watts, Whole HEM for Amps, Watts, & Volts
-//		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: dDelay).format(), 	// Defaul every 30 seconds
+//		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6145).format(),		// Whole HEM and L1/L2 power in kWh
+//		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: kDelay).format(),	// Default every 120 Seconds
+//		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1573646).format(),	// L1/L2 for Amps & Watts, Whole HEM for Amps, Watts, & Volts
+//		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: dDelay).format(),	// Defaul every 30 seconds
 
 //		zwave.configurationV1.configurationSet(parameterNumber: 100, size: 1, scaledConfigurationValue: 0).format(),		// reset to defaults
 		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6149).format(),   	// All L1/L2 kWh, total Volts & kWh
-		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: 30).format(), 		// Every 60 seconds
-		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1572872).format(),	// Amps L1, L2, Total
-		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: 30).format(), 		// every 30 seconds
+		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: 30).format(), 		// Every 30 seconds
+//		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1572872).format(),	// Amps L1, L2, Total
+//		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: 30).format(), 		// every 30 seconds
 		zwave.configurationV1.configurationSet(parameterNumber: 103, size: 4, scaledConfigurationValue: 770).format(),		// Power (Watts) L1, L2, Total
-		zwave.configurationV1.configurationSet(parameterNumber: 113, size: 4, scaledConfigurationValue: 6).format() 		// every 6 seconds
+		zwave.configurationV1.configurationSet(parameterNumber: 113, size: 4, scaledConfigurationValue: 30).format() 		// every 6 seconds
 	], 2000)
 	log.debug cmd
 
