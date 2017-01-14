@@ -335,6 +335,9 @@ metadata {
 		])
 	}
     preferences {
+    	input "voltageValue", "number", title: "Voltage being monitored", /* description: "240", */ defaultValue: 240
+    	input "c1Name", "string", title: "Clamp 1 Name", description: "Name of appliance Clamp 1 is monitoring", defaultValue: "Clamp 1" as String
+    	input "c2Name", "string", title: "Clamp 2 Name", description: "Name of appliance Clamp 2 is monitoring", defaultValue: "Clamp 2" as String
     	input "kWhCost", "string", title: "\$/kWh (0.16)", description: "0.16", defaultValue: "0.16" as String
     	input "kWhDelay", "number", title: "kWh report seconds (60)", /* description: "120", */ defaultValue: 120
     	input "detailDelay", "number", title: "Detail report seconds (30)", /* description: "30", */ defaultValue: 30
@@ -355,7 +358,7 @@ def updated() {
 }
 
 def parse(String description) {
-//	log.debug "Parse received ${description}"
+	log.debug "Parse received ${description}"
 	def result = null
 	def cmd = zwave.parse(description, [0x31: 1, 0x32: 1, 0x60: 3])
 	if (cmd) {
@@ -491,22 +494,24 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 			if (cmd.sourceEndPoint == 1) {
 				if (encapsulatedCommand.scale == 2 ) {
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue)
-                    if (newValue > MAX_WATTS) { return }
+                    formattedValue = newValue as String
+					if (newValue < 0 || newValue > MAX_WATTS ) {
+                    	//New value outside of acceptable range therefore not OK to display. Log value for debugging purposes
+                    	log.debug "ERROR: Out of range c1 value: ${formattedValue} W"
+                    }
+                    else {
 					formattedValue = newValue as String
-					dispValue = "HVAC\n${formattedValue}\nWatts"	// L1 Watts Label
+					dispValue = "${c1Name}\n${formattedValue}\nWatts"	// L1 Watts Label
 					if (dispValue != state.powerL1Disp) {
 						state.powerL1Disp = dispValue
-						if (state.display == 2) {
-							[name: "powerOne", value: dispValue, unit: "", descriptionText: "L1 Power: ${formattedValue} Watts"]
-						}
-						else {
-						}
-					}
+						[name: "powerOne", value: dispValue, unit: "", descriptionText: "L1 Power: ${formattedValue} Watts"]
+						}	
+                    }
 				} 
 				else if (encapsulatedCommand.scale == 0 ){
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue * 100) / 100
 					formattedValue = String.format("%5.2f", newValue)
-					dispValue = "HVAC\n${formattedValue}\nkWh"		// L1 kWh label
+					dispValue = "${c1Name}\n${formattedValue}\nkWh"		// L1 kWh label
 					if (dispValue != state.energyL1Disp) {
 						state.energyL1Disp = dispValue
 						if (state.display == 2) {
@@ -562,22 +567,24 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 			else if (cmd.sourceEndPoint == 2) {
 				if (encapsulatedCommand.scale == 2 ){
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue)
-                    if (newValue > MAX_WATTS ) { return }
+                    formattedValue = newValue as String
+					if (newValue < 0 || newValue > MAX_WATTS ) {
+                    	//New value outside of acceptable range therefore not OK to display. Log value for debugging purposes
+                    	log.debug "ERROR: Out of range c1 value: ${formattedValue} W"
+                    }
+                    else {
 					formattedValue = newValue as String
-					dispValue = "Dryer\n${formattedValue}\nWatts"	// L2 Watts label
-					if (dispValue != state.powerL2Disp) {
-						state.powerL2Disp = dispValue
-						if (state.display == 2) {
-							[name: "powerTwo", value: dispValue, unit: "", descriptionText: "L2 Power: ${formattedValue} Watts"]
-						}
-						else {
-						}
-					}
+					dispValue = "${c2Name}\n${formattedValue}\nWatts"	// L2 Watts Label
+					if (dispValue != state.powerL1Disp) {
+						state.powerL1Disp = dispValue
+						[name: "powerTwo", value: dispValue, unit: "", descriptionText: "L2 Power: ${formattedValue} Watts"]
+						}	
+                    }
 				} 
 				else if (encapsulatedCommand.scale == 0 ){
 					newValue = Math.round(encapsulatedCommand.scaledMeterValue * 100) / 100
 					formattedValue = String.format("%5.2f", newValue)
-					dispValue = "Dryer\n${formattedValue}\nkWh"		// L2 kWh label
+					dispValue = "${c2Name}\n${formattedValue}\nkWh"		// L2 kWh label
 					if (dispValue != state.energyL2Disp) {
 						state.energyL2Disp = dispValue
 						if (state.display == 2) {
@@ -782,7 +789,7 @@ def configure() {
 	}
     
 	def cmd = delayBetween([
-    	zwave.configurationV1.configurationSet(parameterNumber: 1, size: 2, scaledConfigurationValue: 240).format(),		// assumed voltage
+    	zwave.configurationV1.configurationSet(parameterNumber: 1, size: 2, scaledConfigurationValue: voltageValue).format(),		// assumed voltage
 		zwave.configurationV1.configurationSet(parameterNumber: 3, size: 1, scaledConfigurationValue: 0).format(),			// Disable (=0) selective reporting
 //		zwave.configurationV1.configurationSet(parameterNumber: 4, size: 2, scaledConfigurationValue: 5).format(),			// Don't send whole HEM unless watts have changed by 30
 //		zwave.configurationV1.configurationSet(parameterNumber: 5, size: 2, scaledConfigurationValue: 5).format(),			// Don't send L1 Data unless watts have changed by 15
@@ -795,7 +802,7 @@ def configure() {
 //		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1573646).format(),	// L1/L2 for Amps & Watts, Whole HEM for Amps, Watts, & Volts
 //		zwave.configurationV1.configurationSet(parameterNumber: 112, size: 4, scaledConfigurationValue: dDelay).format(),	// Defaul every 30 seconds
 
-//		zwave.configurationV1.configurationSet(parameterNumber: 100, size: 1, scaledConfigurationValue: 0).format(),		// reset to defaults
+		zwave.configurationV1.configurationSet(parameterNumber: 100, size: 1, scaledConfigurationValue: 0).format(),		// reset to defaults
 		zwave.configurationV1.configurationSet(parameterNumber: 101, size: 4, scaledConfigurationValue: 6149).format(),   	// All L1/L2 kWh, total Volts & kWh
 		zwave.configurationV1.configurationSet(parameterNumber: 111, size: 4, scaledConfigurationValue: 30).format(), 		// Every 30 seconds
 //		zwave.configurationV1.configurationSet(parameterNumber: 102, size: 4, scaledConfigurationValue: 1572872).format(),	// Amps L1, L2, Total
